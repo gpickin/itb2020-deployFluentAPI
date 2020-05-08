@@ -1,0 +1,43 @@
+version: "3.4"
+
+secrets:
+
+  DB_PASSWORD:
+    external: true
+
+
+services:
+  # CFML Engine
+  cfml:
+    image: ortussolutions/commandbox  
+    # bind public port to 8080
+    ports:
+      - "8080:8080"
+    volumes:
+      - /opt/fluentAPI:/app
+    environment:
+      - APPNAME=fluentAPI
+      - ENVIRONMENT=development
+      # Database Information
+      -  DB_CLASS=com.mysql.jdbc.Driver
+      -  DB_DRIVER=MySQL
+      -  DB_HOST=167.99.174.132
+      -  DB_PORT=3306
+      -  DB_DATABASE=fluentAPI
+      -  DB_USER=fluentAPI
+      -  DB_PASSWORD=TOPSECRET
+
+    secrets:
+    - DB_PASSWORD
+
+    # Deployment Configuration
+    deploy:
+      replicas: 1
+      update_config:
+        parallelism: 1
+        delay: 0s
+        failure_action: continue
+        order: start-first
+      restart_policy:
+        condition: on-failure
+        delay: 5s
